@@ -40,14 +40,12 @@ jobs:
       - name: Publish distributable signed Shortcuts if signing worked
         shell: bash
         run: |
-          shopt -s nullglob
-          files=(dist/signed/*.shortcut)
-          if [ "\${#files[@]}" -eq 0 ]; then
+          if ! compgen -G "dist/signed/*.shortcut" > /dev/null; then
             echo "Apple signing unavailable on this cloud runner. No installable Shortcuts published."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f "\${files[@]}"
+          git add -f dist/signed/*.shortcut
           git commit -m "Publish Apple-signed Simulation Bank Shortcuts [skip ci]" || exit 0
           git push
