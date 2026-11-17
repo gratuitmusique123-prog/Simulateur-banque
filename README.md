@@ -1,0 +1,55 @@
+# Simulation Bank • banque et TPE fictifs
+
+Une petite application web gratuite pour simuler la génération de cartes, les paiements, le solde et l'historique. **Elle ne génère aucune carte bancaire réelle et n'utilise pas Apple Pay.** Elle ne donne pas accès à Apple Intelligence.
+
+## Utilisation immédiate sur iPhone avec GitHub Pages
+
+1. Ouvrez le dépôt `gratuitmusique123-prog/Simulateur-banque` déjà créé.
+2. Les fichiers de l'application se trouvent à la racine du dépôt.
+3. Dans **Settings > Pages**, sélectionnez **Deploy from a branch**, branche `main`, dossier `/ (root)`, puis **Save**.
+4. Ouvrez l'URL affichée dans cette page des paramètres, puis dans Safari choisissez **Partager > Sur l'écran d'accueil**.
+5. L'interface est autonome. Les données sont conservées *dans le navigateur de cet appareil*. Ce mode ne synchronise pas deux iPhone entre eux.
+
+Dans l'application Raccourcis, créez un raccourci avec deux actions **URL** (URL de votre site, suffixe `#dashboard` ou `#tpe`) puis **Ouvrir les URL**. Aucune action « Utiliser un modèle » n'est nécessaire.
+
+## Mode serveur de démonstration, pour synchroniser plusieurs téléphones
+
+Sur un ordinateur Windows avec Node.js 18 ou supérieur, ouvrez le dossier et lancez :
+
+```powershell
+node server.js
+```
+
+Le site est accessible localement sur `http://127.0.0.1:8787`.
+
+Pour que plusieurs appareils du même réseau accèdent au même état, définissez une clé de test et liez le serveur au réseau local :
+
+```powershell
+$env:HOST = '0.0.0.0'
+$env:SIM_BANK_TOKEN = 'choisir-une-cle-secrete-longue'
+node server.js
+```
+
+**Important** : la version web fournie n'a pas d'écran d'authentification à clé. Si `SIM_BANK_TOKEN` est défini, l'API est protégée mais l'interface web ne peut pas l'utiliser directement ; pour une démonstration d'API via Raccourcis, envoyez l'en-tête HTTP `Authorization: Bearer choisir-une-cle-secrete-longue`. Pour une interface multi-iPhone opérationnelle, il reste à lui ajouter un formulaire de clé côté client. Ne publiez jamais le serveur sans HTTPS, authentification adaptée et sécurité réseau. La synchronisation réseau est expérimentale.
+
+### Endpoints pour Raccourcis
+
+Toutes les opérations renvoient du JSON :
+
+- `GET /api/status` : serveur disponible.
+- `GET /api/state` : solde, cartes et historique.
+- `POST /api/cards` avec `{}` : nouvelle carte simulée.
+- `POST /api/pay` avec `{"cardId":"SIM-...","amountCents":2500,"pin":"1234","idempotencyKey":"uuid-unique"}` : paiement fictif.
+- `POST /api/credit` avec `{"amountCents":10000}` : crédit fictif.
+- `POST /api/toggle` avec `{"cardId":"SIM-..."}` : bloque / active une carte.
+- `POST /api/reset` avec `{"confirm":"RESET"}` : réinitialisation.
+
+Dans Raccourcis : **URL > Obtenir le contenu de l'URL**, méthode **POST**, corps **JSON**, puis **Afficher le résultat** ou **Obtenir la valeur du dictionnaire**. Ajoutez l'en-tête `Authorization` si vous avez activé la clé. Toutes les sommes sont en centimes entiers, le code `1234` est **uniquement un code de démonstration**.
+
+## Sécurité et limites
+
+- Aucune connexion aux réseaux Visa, Mastercard ni aux comptes bancaires.
+- Ne fonctionne pas comme carte de paiement Apple Wallet ou Apple Pay.
+- GitHub Pages sert des fichiers statiques, pas un serveur transactionnel.
+- Les données locales peuvent être perdues si l'utilisateur efface les données Safari.
+- Le serveur Node est un prototype LAN pédagogique, pas un système financier réel.
