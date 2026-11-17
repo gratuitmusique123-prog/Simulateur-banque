@@ -30,7 +30,7 @@ $env:SIM_BANK_TOKEN = 'choisir-une-cle-secrete-longue'
 node server.js
 ```
 
-**Important** : la version web fournie n'a pas d'écran d'authentification à clé. Si `SIM_BANK_TOKEN` est défini, l'API est protégée mais l'interface web ne peut pas l'utiliser directement ; pour une démonstration d'API via Raccourcis, envoyez l'en-tête HTTP `Authorization: Bearer choisir-une-cle-secrete-longue`. Pour une interface multi-iPhone opérationnelle, il reste à lui ajouter un formulaire de clé côté client. Ne publiez jamais le serveur sans HTTPS, authentification adaptée et sécurité réseau. La synchronisation réseau est expérimentale.
+**Important** : ouvrez l'adresse du serveur depuis Safari sur les appareils du même réseau, puis dans **Options > Connexion au serveur local**, saisissez la clé `SIM_BANK_TOKEN`. La clé est conservée uniquement dans la session du navigateur et jamais dans GitHub. Pour une démonstration d'API via Raccourcis, envoyez l'en-tête HTTP `Authorization: Bearer choisir-une-cle-secrete-longue`. Le serveur HTTP est prévu pour un LAN de confiance uniquement, pas pour Internet. Sur GitHub Pages, le mode autonome reste local à chaque navigateur ; **les données ne se synchronisent entre appareils que lorsqu'ils visitent le serveur Node commun.**
 
 ### Endpoints pour Raccourcis
 
