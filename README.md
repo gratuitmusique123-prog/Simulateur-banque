@@ -53,3 +53,16 @@ Dans Raccourcis : **URL > Obtenir le contenu de l'URL**, méthode **POST**, corp
 - GitHub Pages sert des fichiers statiques, pas un serveur transactionnel.
 - Les données locales peuvent être perdues si l'utilisateur efface les données Safari.
 - Le serveur Node est un prototype LAN pédagogique, pas un système financier réel.
+
+## Générateur de raccourcis Apple sur Mac M1 GitHub
+
+Un workflow automatique a été ajouté dans [GitHub Actions](https://github.com/gratuitmusique123-prog/Simulateur-banque/actions/workflows/shortcuts.yml).
+
+- Sur une machine GitHub `macos-15` Apple Silicon, `tools/build_shortcuts.py` construit trois fichiers .shortcut contenant chacun deux actions natives : URL et Ouvrir les URL.
+- Le raccourci **Simulation Bank** ouvre le tableau de bord ; **Simulation Bank - Cartes** génère une carte fictive à chaque ouverture de son URL ; **Simulation Bank - TPE** ouvre le simulateur de terminal.
+- `tools/sign_shortcuts.py` essaie la signature officielle `shortcuts sign --mode anyone`, et conserve dans `dist/SIGNATURE-REPORT.json` les résultats ou les erreurs.
+- L'artefact de build est disponible sur la page du workflow, après son exécution. **Les fichiers non signés ne sont pas importables directement sur iOS récent.** Seuls les fichiers `dist/signed/*.shortcut`, s'ils sont effectivement créés et validés, sont destinés à l'installation.
+- Une machine GitHub sans compte Apple connecté peut refuser la signature. Un workflow CI n'est pas une session macOS interactive Apple Intelligence et ne peut pas créer de lien de partage iCloud à lui seul.
+
+[Prompt intégral](PROMPT-RACCOURCIS.md) à utiliser sur un Mac personnel avec l'éditeur Raccourcis si l'on veut aller plus loin que les raccourcis lanceurs.
+
