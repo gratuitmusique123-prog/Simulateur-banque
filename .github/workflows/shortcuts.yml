@@ -1,0 +1,53 @@
+name: Build Apple Shortcuts on M1 Mac
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/build_shortcuts.py"
+      - "tools/sign_shortcuts.py"
+      - ".github/workflows/shortcuts.yml"
+      - "index.html"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-shortcuts:
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Report Mac machine
+        run: |
+          echo "Processor: $(uname -m)"
+          sw_vers
+          command -v shortcuts || true
+      - name: Generate three real Shortcuts workflows
+        run: |
+          python3 tools/build_shortcuts.py
+          for f in dist/unsigned/*.shortcut; do plutil -lint "$f"; done
+      - name: Attempt Apple signing
+        run: python3 tools/sign_shortcuts.py
+      - name: Upload build results
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulation-bank-apple-shortcuts
+          path: dist/
+          retention-days: 30
+      - name: Publish distributable signed Shortcuts if signing worked
+        shell: bash
+        run: |
+          shopt -s nullglob
+          files=(dist/signed/*.shortcut)
+          if [ "\${#files[@]}" -eq 0 ]; then
+            echo "Apple signing unavailable on this cloud runner. No installable Shortcuts published."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f "\${files[@]}"
+          git commit -m "Publish Apple-signed Simulation Bank Shortcuts [skip ci]" || exit 0
+          git push
